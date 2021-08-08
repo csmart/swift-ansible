@@ -1,0 +1,6 @@
+---
+- hosts: swift
+  tasks:
+    - include_role:
+        name: csmart.swift
+        tasks_from: prep

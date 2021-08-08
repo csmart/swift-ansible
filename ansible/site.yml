@@ -1,0 +1,27 @@
+---
+- hosts: swift
+  tasks:
+    - include_role:
+        name: csmart.swift
+      tags:
+        - account
+        - common
+        - config
+        - container
+        - disks
+        - dispersion
+        - hosts
+        - keepalived
+        - logging
+        - memcached
+        - object
+        - packages
+        - prep
+        - proxy
+        - rings
+        - rsyncd
+        - selinux
+        - services
+        - ssl
+        - system
+        - update

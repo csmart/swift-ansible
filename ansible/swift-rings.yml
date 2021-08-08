@@ -1,0 +1,9 @@
+---
+- hosts: swift
+  tasks:
+    - include_role:
+        name: csmart.swift
+        tasks_from: swift-ring-builder
+    - include_role:
+        name: csmart.swift
+        tasks_from: swift-ring-rebalance

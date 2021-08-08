@@ -1,0 +1,75 @@
+---
+## YAML based inventory, see:
+## https://docs.ansible.com/ansible/latest/plugins/inventory/yaml.html
+#
+## This is a sample inventory for a three PACO node Swift cluster
+## A swift admin host is required to manage the cluster
+#
+## This is the top level swift group, used to limit the scope of the play
+swift:
+  ## These sub groups map to Swift roles, specific tasks run on specific nodes
+  children:
+    ## Admin host for managing the cluster and rings
+    swift_admin:
+      hosts:
+        swift-admin:
+    ## Nodes for the proxy role
+    swift_proxy:
+      hosts:
+        swift-[01:03]:
+    ## Nodes for the account role
+    swift_account:
+      hosts:
+        swift-[01:03]:
+    ## Nodes for the container role
+    swift_container:
+      hosts:
+        swift-[01:03]:
+    ## Nodes for the object role
+    swift_object:
+      hosts:
+        swift-[01:03]:
+  ## These are the nodes in the cluster
+  hosts:
+    swift-admin:
+      server_ip: 10
+    swift-01:
+      server_ip: 11
+      swift_vips:
+        - 111
+        - 112
+        - 113
+    swift-02:
+      server_ip: 12
+      swift_vips:
+        - 112
+        - 113
+        - 111
+    swift-03:
+      server_ip: 13
+      swift_vips:
+        - 113
+        - 111
+        - 112
+  vars:
+    ## Networks are globally defined so each node knows it
+    swift_outward_subnet: 203.0.113.0/24
+    swift_cluster_subnet: 192.0.2.0/24
+    swift_replication_subnet: 198.51.100.0/24
+    ## Each node needs to know its
+    swift_outward_ip: "{{ swift_outward_subnet | next_nth_usable(server_ip) }}"
+    swift_cluster_ip: "{{ swift_cluster_subnet | next_nth_usable(server_ip) }}"
+    swift_replication_ip: "{{ swift_replication_subnet | next_nth_usable(server_ip) }}"
+
+    ## We need at least one data disk
+    ## /dev/sda is usually the root volume, so we use /dev/sdb
+    swift_rings_disks:
+      - disk:
+          device: sdb
+          rings:
+          - name: account
+            weight: 100
+          - name: container
+            weight: 100
+          - name: object
+            weight: 100
